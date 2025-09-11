@@ -22,10 +22,17 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
     @Override
     protected void configure(HttpSecurity http) throws Exception {
-        http.csrf().disable();
-        http.authorizeRequests().antMatchers("/user/**").hasRole("NORMAL")
-               // .antMatchers("/admin/**").hasRole("ADMIN")
-                .antMatchers("/**").permitAll().and().formLogin()
-                .loginPage("/login").defaultSuccessUrl("/loginSuccess");
+        http.csrf().disable(); // H2 console ke liye required
+        http.headers().frameOptions().disable(); // H2 iframe allow
+
+        http.authorizeRequests()
+            .antMatchers("/h2-console/**").permitAll() // H2 console allow
+            .antMatchers("/user/**").hasRole("NORMAL")
+            //.antMatchers("/admin/**").hasRole("ADMIN")
+            .antMatchers("/**").permitAll()
+            .and()
+            .formLogin()
+                .loginPage("/login")
+                .defaultSuccessUrl("/loginSuccess");
     }
 }
